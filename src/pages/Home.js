@@ -1,10 +1,10 @@
 import * as React from 'react';
-
+import Weblayout from '../layout/Weblayout'
 
 
 function Home() {
   return (
-<>
+<Weblayout>
 
 
 
@@ -574,7 +574,7 @@ function Home() {
         </div>
 
 
-</>       
+</Weblayout>       
 
   );
 }

@@ -1,9 +1,9 @@
 import * as React from 'react';
-
+import Weblayout from '../layout/Weblayout'
 
 function About() {
   return (
-<>
+<Weblayout>
 
 
         <div className="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -173,7 +173,7 @@ function About() {
             </div>
         </div>
 
-</>       
+</Weblayout>       
 
   );
 }
