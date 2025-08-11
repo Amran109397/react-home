@@ -28,7 +28,7 @@ function Useradd() {
                 url: `http://localhost/learner-api/users_add.php`,
                 data: inputs
             });
-            navigate('/admin/user')
+            navigate('/admin/users')
         } 
         catch(e){
             console.log(e);
