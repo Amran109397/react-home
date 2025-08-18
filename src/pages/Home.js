@@ -1,8 +1,23 @@
-import * as React from 'react';
-import Weblayout from '../layout/Weblayout'
+import React, { useEffect, useState } from 'react';
+import Weblayout from '../layout/Weblayout';
+import axios from '../Admin/component/axios';
+import { useCart } from "react-use-cart";
 
 
 function Home() {
+    const { addItem } = useCart();
+
+    const [featured, setFeatured] = useState([]);
+
+    useEffect(() => {
+        getProducts();
+    }, []);
+    const getProducts = async (e) => {
+        let feat = await axios.get(`front_api/products.php?query_type=featured&limit=5`)
+        setFeatured(feat.data);
+    }
+
+
   return (
 <Weblayout>
 
@@ -298,40 +313,27 @@ function Home() {
                     <h4 className="text-uppercase text-primary">Our Products</h4>
                     <h1 className="display-3 text-capitalize mb-3">We Deliver Best Quality Bottle Packs.</h1>
                 </div>
-                <div className="row g-4 justify-content-center">
-                    <div className="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
-                        <div className="product-item">
-                            <img src="assets/img/product-3.png" className="img-fluid w-100 rounded-top"  alt="Image"/>
-                            <div className="product-content bg-light text-center rounded-bottom p-4">
-                                <p>2L 1 Bottle</p>
-                                <a href="#" className="h4 d-inline-block mb-3">Mineral Water Bottle</a>
-                                <p className="fs-4 text-primary mb-3">$35:00</p>
-                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.4s">
-                        <div className="product-item">
-                            <img src="assets/img/product-2.png" className="img-fluid w-100 rounded-top"  alt="Image"/>
-                            <div className="product-content bg-light text-center rounded-bottom p-4">
-                                <p>4L 2 Bottles</p>
-                                <a href="#" className="h4 d-inline-block mb-3">RO Water Bottle</a>
-                                <p className="fs-4 text-primary mb-3">$70:00</p>
-                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.6s">
-                        <div className="product-item">
-                            <img src="assets/img/product-1.png" className="img-fluid w-100 rounded-top"  alt="Image"/>
-                            <div className="product-content bg-light text-center rounded-bottom p-4">
-                                <p>6L 3 Bottles</p>
-                                <a href="#" className="h4 d-inline-block mb-3">UV Water Bottle</a>
-                                <p className="fs-4 text-primary mb-3">$100:00</p>
-                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4">Read More</a>
-                            </div>
-                        </div>
-                    </div>
+                  <div className="row g-4 justify-content-center">
+                      {
+                          featured.length > 0 && featured.map((d, key) =>
+                              <div className="col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+                                  <div className="product-item">
+                                      <img src={`${process.env.REACT_APP_API_URL}${d.image}`} className="img-fluid w-100 rounded-top" alt="Image" />
+                                      <div className="product-content bg-light text-center rounded-bottom p-4">
+                                          <p>2L 1 Bottle</p>
+                                          <a href="#" className="h4 d-inline-block mb-3">{d.name}</a>
+                                          <p className="fs-4 text-primary mb-3">{d.price}</p>
+                                          <button
+                                              className="btn btn-secondary rounded-pill py-2 px-4"
+                                              onClick={() => addItem(d)}
+                                          >
+                                              Add to Cart
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          )
+                      }
                 </div>
             </div>
         </div>

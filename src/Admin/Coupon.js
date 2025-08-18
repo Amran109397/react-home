@@ -4,11 +4,10 @@ import Adminlayout from '../layout/Adminlayout';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function Users() {
-  const [users,setUsers]=useState([]);
+function Coupon() {
+  const [list,setList]=useState([]);
   const [show, setShow] = useState(false);
   const [inputs, setInputs] = useState([]);
-  const [selectedfile, setSelectedFile] = useState([]);
 
   const handleClose = () => {
     setShow(false)
@@ -17,9 +16,10 @@ function Users() {
     setInputs({
             id:'',
             name:'',
-            contact_no:'',
-            email:'',
-            password:''
+            code:'',
+            amount:'',
+            start_date:'',
+            finish_date:''
         });
     setShow(true);
   }
@@ -29,30 +29,24 @@ function Users() {
   }, []);
 
   const getDatas = async (e) => {
-    let res = await axios.get(`users/list.php`)
-    setUsers(res.data);
-  }
-
-  const handelFile = (e) => {
-    setSelectedFile(e.target.files)
+    let res = await axios.get(`coupon/list.php`)
+    setList(res.data);
   }
 
   const handleSubmit = async(e) => {
     e.preventDefault();
 
     let datas={
-        name:e.target.name.value,
-        contact_no:e.target.contact_no.value,
-        email:e.target.email.value,
-        password:e.target.password.value
+      name:e.target.name.value,
+      code:e.target.code.value,
+      amount:e.target.amount.value,
+      start_date:e.target.start_date.value,
+      finish_date:e.target.finish_date.value
     }
     
     datas ={...inputs, ...datas} // marge two object
    
     const formData = new FormData();
-    for (let i = 0; i < selectedfile.length; i++) {
-      formData.append('files[]', selectedfile[i])
-    }
     for (const property in datas) {
       formData.append(property, datas[property])
     }
@@ -60,9 +54,9 @@ function Users() {
     try{
       let url='';
       if(datas.id!=''){
-        url=`users/update.php`;
+        url=`coupon/update.php`;
       }else{
-        url=`users/add.php`;
+        url=`coupon/add.php`;
       }
      
       let response= await axios.post(url,formData);
@@ -85,7 +79,7 @@ function Users() {
   }
 
   const deleteUser = async(id) => {
-    let res = await axios.get(`users/delete.php?id=${id}`);
+    let res = await axios.get(`coupon/delete.php?id=${id}&table_name=categories`);
     getDatas();
   }
 
@@ -93,7 +87,7 @@ function Users() {
   return (
     <Adminlayout>
       <div className='container'>
-        <h1>User</h1>
+        <h1>Coupon</h1>
         
         <Button variant="primary" onClick={handleShow}>
           Add New
@@ -103,20 +97,22 @@ function Users() {
           <tr>
             <th>#SL</th>
             <th>Name</th>
-            <th>Contact</th>
-            <th>Email</th>
-            <th>Image</th>
+            <th>Code</th>
+            <th>Amount</th>
+            <th>Start Date</th>
+            <th>End Date</th>
             <th>Action</th>
           </tr>
           </thead>
           <tbody>
-          {users && users.map((d, key) =>
+          {list.length > 0 && list.map((d, key) =>
             <tr key={key}>
               <td className="text-bold-500">{key+1}</td>
               <td>{d.name}</td>
-              <td>{d.contact_no}</td>
-              <td>{d.email}</td>
-              <td><img src={`${process.env.REACT_APP_API_URL}${d.image}`} width="100px"/></td>
+              <td>{d.code}</td>
+              <td>{d.amount}</td>
+              <td>{d.start_date}</td>
+              <td>{d.finish_date}</td>
               <td>
                   <Button variant="primary" onClick={()=>{showEdit(d)}}>Edit</Button>
                   <Button variant="danger" onClick={()=>{deleteUser(d.id)}}>Delete</Button>
@@ -138,20 +134,20 @@ function Users() {
                   <input type='text' defaultValue={inputs.name} className='form-control' name="name" id='name'/>
               </div>
               <div className='form-group'>
-                  <label htmlFor='email'>Email</label>
-                  <input type='text' defaultValue={inputs.email} className='form-control' name="email" id='email'/>
+                  <label htmlFor='code'>Code</label>
+                  <input type='text' defaultValue={inputs.code} className='form-control' name="code" id='code'/>
               </div>
               <div className='form-group'>
-                  <label htmlFor='contact_no'>Contact</label>
-                  <input type='text' defaultValue={inputs.contact_no} className='form-control' name="contact_no" id='contact_no'/>
+                  <label htmlFor='amount'>Amount (%)</label>
+                  <input type='text' defaultValue={inputs.amount} className='form-control' name="amount" id='amount'/>
               </div>
               <div className='form-group'>
-                  <label htmlFor='image'>Photo</label>
-                  <input type='file' onChange={handelFile} className='form-control' name='image' id='image'/>
+                  <label htmlFor='start_date'>Start Date</label>
+                  <input type='date' defaultValue={inputs.start_date} className='form-control' name="start_date" id='start_date'/>
               </div>
               <div className='form-group'>
-                  <label htmlFor='password'>Password</label>
-                  <input type='text' className='form-control' name='password' id='password'/>
+                  <label htmlFor='finish_date'>End Date</label>
+                  <input type='date' defaultValue={inputs.finish_date} className='form-control' name="finish_date" id='finish_date'/>
               </div>
 
           </Modal.Body>
@@ -170,4 +166,4 @@ function Users() {
 }
 
 
-export default Users;
+export default Coupon;

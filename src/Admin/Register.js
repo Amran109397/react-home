@@ -17,16 +17,14 @@ function Register() {
       contact_no:e.target.contact_no.value,
       password:e.target.password.value
     }
-   
-    try{
-      
-      let url='register.php';
-          const formData = new FormData();
+    const formData = new FormData();
     for (const property in datas) {
       formData.append(property, datas[property])
     }
+   
+    try{
       
-      let response= await axios.post(url, formData);
+      let response= await axios.post('register.php',formData);
       if(response.data.error==0)
         navigate('/login')
       else
