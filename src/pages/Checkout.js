@@ -2,219 +2,414 @@ import * as React from 'react';
 import Weblayout from '../layout/Weblayout';
 import { useCart } from "react-use-cart";
 import axios from '../Admin/component/axios';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCity, FaArrowLeft, FaCheck } from 'react-icons/fa';
 
-function Checkout () {
+function Checkout() {
     const {
-      isEmpty,
-      items,
-      emptyCart,
-      cartTotal,
-      metadata 
+        isEmpty,
+        items,
+        emptyCart,
+        cartTotal,
+        metadata 
     } = useCart();
-
     
-    const saveCheckout=async (e) => {
-      e.preventDefault();
-
-      let datas={
-        customer_name:e.target.customer_name.value,
-        customer_contact:e.target.customer_contact.value,
-        customer_email:e.target.customer_email.value,
-        billing_address:e.target.billing_address.value,
-        billing_city:e.target.billing_city.value,
-        shipping_address:e.target.shipping_address.value,
-        shipping_city:e.target.shipping_city.value,
-        sub_total:cartTotal,
-        discount:metadata.discount ?? 0,
-        grand_total:(cartTotal - metadata.discount ?? 0),
-        cart_details:JSON.stringify(items)
-      }
-      const formData = new FormData();
-      for (const property in datas) {
-        formData.append(property, datas[property])
-      }
-
-      try{
-          let url=`front_api/checkout.php`
-          
-          let res= await axios.post(url,formData);
-          // console.log(res);
-          // return false;
-          if(res.data.error == 1){
-            alert(res.data.message)
-          }else{
-            emptyCart();
-            window.location.href='/';
-          }
-        } 
-        catch(e){
-          console.log(e);
-        }
-    }
-
+    const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [formErrors, setFormErrors] = React.useState({});
+    const [shippingSameAsBilling, setShippingSameAsBilling] = React.useState(true);
     
-    return(
-        <Weblayout>
-    <section className="banner_area">
-      <div className="banner_inner d-flex align-items-center">
-        <div className="container">
-          <div
-            className="banner_content d-md-flex justify-content-between align-items-center"
-          >
-            <div className="mb-3 mb-md-0">
-              <h2>Product Checkout</h2>
-              <p>Very us move be blessed multiply night</p>
-            </div>
-            <div className="page_link">
-              <a href="index.html">Home</a>
-              <a href="checkout.html">Product Checkout</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <section className="checkout_area section_gap">
-      <div className="container">
+    const validateForm = (formData) => {
+        const errors = {};
         
-        <div className="billing_details">
-          <div className="row">
-            <div className="col-lg-8">
-              <h3>Billing Details</h3>
-              <form
-                className="row contact_form"
-                onSubmit={saveCheckout}
-              >
+        if (!formData.customer_name.trim()) {
+            errors.customer_name = "Name is required";
+        }
+        
+        if (!formData.customer_contact.trim()) {
+            errors.customer_contact = "Phone number is required";
+        } else if (!/^[0-9]{10,15}$/.test(formData.customer_contact.replace(/\s/g, ''))) {
+            errors.customer_contact = "Please enter a valid phone number";
+        }
+        
+        if (!formData.customer_email.trim()) {
+            errors.customer_email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customer_email)) {
+            errors.customer_email = "Please enter a valid email address";
+        }
+        
+        if (!formData.billing_address.trim()) {
+            errors.billing_address = "Billing address is required";
+        }
+        
+        if (!shippingSameAsBilling && !formData.shipping_address.trim()) {
+            errors.shipping_address = "Shipping address is required";
+        }
+        
+        return errors;
+    };
+    
+    const saveCheckout = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        
+        try {
+            // Collect form data
+            const formData = {
+                customer_name: e.target.customer_name.value,
+                customer_contact: e.target.customer_contact.value,
+                customer_email: e.target.customer_email.value,
+                billing_address: e.target.billing_address.value,
+                billing_city: e.target.billing_city.value,
+                shipping_address: shippingSameAsBilling ? e.target.billing_address.value : e.target.shipping_address.value,
+                shipping_city: shippingSameAsBilling ? e.target.billing_city.value : e.target.shipping_city.value,
+                sub_total: cartTotal,
+                discount: metadata.discount ?? 0,
+                grand_total: cartTotal - (metadata.discount ?? 0),
+                cart_details: JSON.stringify(items)
+            };
+            
+            // Validate form
+            const errors = validateForm(formData);
+            if (Object.keys(errors).length > 0) {
+                setFormErrors(errors);
+                setIsSubmitting(false);
+                return;
+            }
+            
+            // Create FormData for submission
+            const formPayload = new FormData();
+            for (const property in formData) {
+                formPayload.append(property, formData[property]);
+            }
+            
+            // Make API request
+            const response = await axios.post(`front_api/checkout.php`, formPayload, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            
+            // Handle response
+            if (response.data && response.data.error === 1) {
+                alert(`Error: ${response.data.message || 'Unknown error occurred'}`);
+            } else {
+                // Success - navigate to invoice page with order data
+                const orderData = {
+                    ...formData,
+                    order_id: response.data.order_id || Date.now(), // Use server order_id or generate one
+                    order_date: new Date().toLocaleDateString(),
+                    items: items
+                };
                 
-                <div className="col-md-12 form-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="customer_name"
-                    name="customer_name"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div className="col-md-6 form-group p_star">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="customer_contact"
-                    name="customer_contact"
-                  />
-                  <span
-                    className="placeholder"
-                    data-placeholder="Phone number"
-                  ></span>
-                </div>
-                <div className="col-md-6 form-group p_star">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="customer_email"
-                    name="customer_email"
-                  />
-                  <span
-                    className="placeholder"
-                    data-placeholder="Email Address"
-                  ></span>
-                </div>
+                // Save order data to localStorage for invoice page
+                localStorage.setItem('lastOrder', JSON.stringify(orderData));
                 
-                <div className="col-md-12 form-group p_star">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="billing_address"
-                    name="billing_address"
-                  />
-                  <span
-                    className="placeholder"
-                    data-placeholder="Address line 01"
-                  ></span>
+                // Empty cart and navigate to invoice
+                emptyCart();
+                navigate('/invoice');
+            }
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert('An error occurred while processing your order. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    
+    // Helper function to format price
+    const formatPrice = (price) => {
+        const numPrice = parseFloat(price);
+        return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+    };
+    
+    return (
+        <Weblayout>
+            {/* Page Header */}
+            <section className="page-header bg-gradient-water">
+                <div className="container">
+                    <div className="row align-items-center">
+                        <div className="col-md-8">
+                            <h1 className="text-white">Checkout</h1>
+                            <p className="text-white-50 mb-0">Complete your water purchase</p>
+                        </div>
+                        <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                            <nav aria-label="breadcrumb">
+                                <ol className="breadcrumb justify-content-md-end bg-transparent mb-0">
+                                    <li className="breadcrumb-item"><Link to="/" className="text-white">Home</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/cart" className="text-white">Cart</Link></li>
+                                    <li className="breadcrumb-item active text-white" aria-current="page">Checkout</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
-                
-                <div className="col-md-12 form-group p_star">
-                  <select className="form-control" name="billing_city">
-                    <option value="1">Dhaka</option>
-                    <option value="2">Chattogram</option>
-                  </select>
+            </section>
+            
+            {/* Checkout Section */}
+            <section className="py-5">
+                <div className="container">
+                    {isEmpty ? (
+                        <div className="text-center py-5">
+                            <div className="mb-4">
+                                <i className="fas fa-shopping-cart text-muted" style={{ fontSize: '5rem' }}></i>
+                            </div>
+                            <h3 className="mb-3">Your cart is empty</h3>
+                            <p className="text-muted mb-4">You need to add products to your cart before checkout.</p>
+                            <Link to="/" className="btn btn-primary btn-lg">
+                                <FaArrowLeft className="me-2" /> Continue Shopping
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="row">
+                            <div className="col-lg-8 mb-4">
+                                <div className="card border-0 shadow-sm">
+                                    <div className="card-header bg-white py-3">
+                                        <h5 className="mb-0">Billing & Shipping Information</h5>
+                                    </div>
+                                    <div className="card-body">
+                                        <form onSubmit={saveCheckout}>
+                                            <div className="row g-3">
+                                                <div className="col-12">
+                                                    <label className="form-label">Full Name <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-end-0">
+                                                            <FaUser className="text-primary" />
+                                                        </span>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control border-start-0 ${formErrors.customer_name ? 'is-invalid' : ''}`}
+                                                            id="customer_name"
+                                                            name="customer_name"
+                                                            placeholder="Your full name"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    {formErrors.customer_name && <div className="invalid-feedback">{formErrors.customer_name}</div>}
+                                                </div>
+                                                
+                                                <div className="col-md-6">
+                                                    <label className="form-label">Phone Number <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-end-0">
+                                                            <FaPhone className="text-primary" />
+                                                        </span>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control border-start-0 ${formErrors.customer_contact ? 'is-invalid' : ''}`}
+                                                            id="customer_contact"
+                                                            name="customer_contact"
+                                                            placeholder="Your phone number"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    {formErrors.customer_contact && <div className="invalid-feedback">{formErrors.customer_contact}</div>}
+                                                </div>
+                                                
+                                                <div className="col-md-6">
+                                                    <label className="form-label">Email Address <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-end-0">
+                                                            <FaEnvelope className="text-primary" />
+                                                        </span>
+                                                        <input
+                                                            type="email"
+                                                            className={`form-control border-start-0 ${formErrors.customer_email ? 'is-invalid' : ''}`}
+                                                            id="customer_email"
+                                                            name="customer_email"
+                                                            placeholder="Your email address"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    {formErrors.customer_email && <div className="invalid-feedback">{formErrors.customer_email}</div>}
+                                                </div>
+                                                
+                                                <div className="col-12">
+                                                    <h5 className="mt-4 mb-3">Billing Address</h5>
+                                                </div>
+                                                
+                                                <div className="col-12">
+                                                    <label className="form-label">Address <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-end-0">
+                                                            <FaMapMarkerAlt className="text-primary" />
+                                                        </span>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control border-start-0 ${formErrors.billing_address ? 'is-invalid' : ''}`}
+                                                            id="billing_address"
+                                                            name="billing_address"
+                                                            placeholder="Your billing address"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    {formErrors.billing_address && <div className="invalid-feedback">{formErrors.billing_address}</div>}
+                                                </div>
+                                                
+                                                <div className="col-md-6">
+                                                    <label className="form-label">City <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-end-0">
+                                                            <FaCity className="text-primary" />
+                                                        </span>
+                                                        <select className="form-control border-start-0" name="billing_city" required>
+                                                            <option value="">Select City</option>
+                                                            <option value="1">Dhaka</option>
+                                                            <option value="2">Chattogram</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="col-12">
+                                                    <div className="form-check mt-4">
+                                                        <input 
+                                                            className="form-check-input" 
+                                                            type="checkbox" 
+                                                            id="shippingSame" 
+                                                            checked={shippingSameAsBilling}
+                                                            onChange={(e) => setShippingSameAsBilling(e.target.checked)}
+                                                        />
+                                                        <label className="form-check-label" htmlFor="shippingSame">
+                                                            Shipping address is the same as billing address
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                {!shippingSameAsBilling && (
+                                                    <>
+                                                        <div className="col-12">
+                                                            <h5 className="mt-4 mb-3">Shipping Address</h5>
+                                                        </div>
+                                                        
+                                                        <div className="col-12">
+                                                            <label className="form-label">Address <span className="text-danger">*</span></label>
+                                                            <div className="input-group">
+                                                                <span className="input-group-text bg-light border-end-0">
+                                                                    <FaMapMarkerAlt className="text-primary" />
+                                                                </span>
+                                                                <input
+                                                                    type="text"
+                                                                    className={`form-control border-start-0 ${formErrors.shipping_address ? 'is-invalid' : ''}`}
+                                                                    id="shipping_address"
+                                                                    name="shipping_address"
+                                                                    placeholder="Your shipping address"
+                                                                    required
+                                                                />
+                                                            </div>
+                                                            {formErrors.shipping_address && <div className="invalid-feedback">{formErrors.shipping_address}</div>}
+                                                        </div>
+                                                        
+                                                        <div className="col-md-6">
+                                                            <label className="form-label">City <span className="text-danger">*</span></label>
+                                                            <div className="input-group">
+                                                                <span className="input-group-text bg-light border-end-0">
+                                                                    <FaCity className="text-primary" />
+                                                                </span>
+                                                                <select className="form-control border-start-0" name="shipping_city" required>
+                                                                    <option value="">Select City</option>
+                                                                    <option value="1">Dhaka</option>
+                                                                    <option value="2">Chattogram</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                                
+                                                <div className="col-12 mt-4">
+                                                    <div className="d-flex justify-content-between">
+                                                        <Link to="/cart" className="btn btn-outline-secondary">
+                                                            <FaArrowLeft className="me-2" /> Return to Cart
+                                                        </Link>
+                                                        <button 
+                                                            type="submit" 
+                                                            className="btn btn-primary btn-lg"
+                                                            disabled={isSubmitting}
+                                                        >
+                                                            {isSubmitting ? (
+                                                                <>
+                                                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                                    Processing...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    Place Order <FaCheck className="ms-2" />
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Order Summary */}
+                            <div className="col-lg-4">
+                                <div className="card border-0 shadow-sm sticky-top" style={{ top: '100px' }}>
+                                    <div className="card-header bg-white py-3">
+                                        <h5 className="mb-0">Order Summary</h5>
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="mb-4">
+                                            <h6 className="mb-3">Products</h6>
+                                            {items.map((item) => (
+                                                <div key={item.id} className="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                                                    <div>
+                                                        <div className="fw-bold">{item.name}</div>
+                                                        <div className="text-muted small">Qty: {item.quantity}</div>
+                                                    </div>
+                                                    <div>${formatPrice(item.itemTotal)}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Subtotal</span>
+                                                <span>${formatPrice(cartTotal)}</span>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Discount</span>
+                                                <span className="text-success">-${formatPrice(metadata.discount ?? 0)}</span>
+                                            </div>
+                                            <div className="d-flex justify-content-between mb-2">
+                                                <span>Shipping</span>
+                                                <span className="text-success">Free</span>
+                                            </div>
+                                            <hr />
+                                            <div className="d-flex justify-content-between fw-bold">
+                                                <span>Total</span>
+                                                <span>${formatPrice(cartTotal - (metadata.discount ?? 0))}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mt-4 text-center">
+                                            <p className="text-muted small mb-0">Secure checkout guaranteed</p>
+                                            <div className="mt-2 d-flex justify-content-center">
+                                                <div className="px-2">
+                                                    <i className="fab fa-cc-visa text-muted" style={{ fontSize: '1.5rem' }}></i>
+                                                </div>
+                                                <div className="px-2">
+                                                    <i className="fab fa-cc-mastercard text-muted" style={{ fontSize: '1.5rem' }}></i>
+                                                </div>
+                                                <div className="px-2">
+                                                    <i className="fab fa-cc-amex text-muted" style={{ fontSize: '1.5rem' }}></i>
+                                                </div>
+                                                <div className="px-2">
+                                                    <i className="fab fa-cc-paypal text-muted" style={{ fontSize: '1.5rem' }}></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <div className="col-md-12 form-group p_star">
-                    <h3>Shipping Details</h3>
-                </div>
-                <div className="col-md-12 form-group p_star">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="shipping_address"
-                    name="shipping_address"
-                  />
-                  <span
-                    className="placeholder"
-                    data-placeholder="Address line 01"
-                  ></span>
-                </div>
-                
-                <div className="col-md-12 form-group p_star">
-                  <select className="form-control" name="shipping_city">
-                    <option value="1">Dhaka</option>
-                    <option value="2">Chattogram</option>
-                  </select>
-                </div>
-                <button type='submit' className="main_btn" >Submit</button>
-              </form>
-            </div>
-            <div className="col-lg-4">
-              <div className="order_box">
-                <h2>Your Order</h2>
-                <ul className="list">
-                  <li>
-                    <a href="#"
-                      >Product
-                      <span>Total</span>
-                    </a>
-                  </li>
-                  {!isEmpty && items.map((d, key) =>
-                    <li key={d.id}>
-                      <a href="#"
-                        >{d.name}
-                        <span className="middle">x {d.quantity}</span>
-                        <span className="last">{d.itemTotal}</span>
-                      </a>
-                    </li>
-                  )}
-                  
-                </ul>
-                <ul className="list list_2">
-                  <li>
-                    <a href="#"
-                      >Subtotal
-                      <span>{cartTotal}</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#"
-                      >Discount
-                      <span>{metadata.discount ?? 0}</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#"
-                      >Total
-                      <span>{cartTotal - metadata.discount ?? 0}</span>
-                    </a>
-                  </li>
-                </ul>
-                
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+            </section>
         </Weblayout>
-    )
+    );
 }
+
 export default Checkout;

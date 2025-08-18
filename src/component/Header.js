@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from "react-use-cart";
-
+import { FaShoppingCart } from 'react-icons/fa';
 function Header() {
 
     const { totalUniqueItems } = useCart();
+    
 
     const pagesDropdownItems = [
         { name: "Our Feature", path: "/Feature" },
@@ -53,8 +54,14 @@ function Header() {
                         </div>
                         <button className="btn btn-primary btn-md-square d-flex flex-shrink-0 mb-3 mb-lg-0 rounded-circle me-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i className="fas fa-search"></i></button>
                         <a href="" className="btn btn-primary rounded-pill d-inline-flex flex-shrink-0 py-2 px-4">Order Now</a>
-                        <Link to={'/cart'} className="btn btn-primary rounded-pill d-inline-flex flex-shrink-0 py-2 px-4">
-                            {totalUniqueItems}
+                        <Link to={'/cart'} className="btn btn-primary rounded-pill d-inline-flex flex-shrink-0 py-2 px-4 position-relative">
+                            <FaShoppingCart className="me-2" />
+                            Cart
+                            {totalUniqueItems > 0 && (
+                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {totalUniqueItems}
+                                </span>
+                            )}
                         </Link>
                     </div>
                 </nav>

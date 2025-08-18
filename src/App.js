@@ -11,6 +11,7 @@ import Feature from './pages/Feature';
 
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import Invoice from './pages/Invoice';
 
 /* admin route */
 import Login from './Admin/Login';
@@ -46,6 +47,7 @@ function App() {
           <Route path="/Blog" element={<Blog />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/checkout' element={<Checkout />} />
+          <Route path='/Invoice' element={<Invoice />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
