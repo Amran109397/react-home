@@ -34,19 +34,19 @@ function Invoice() {
     
     if (loading) {
         return (
-            <Weblayout>
+            <>
                 <div className="container py-5 text-center">
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
-            </Weblayout>
+            </>
         );
     }
     
     if (!orderData) {
         return (
-            <Weblayout>
+            <>
                 <section className="py-5">
                     <div className="container text-center">
                         <div className="mb-4">
@@ -59,12 +59,12 @@ function Invoice() {
                         </Link>
                     </div>
                 </section>
-            </Weblayout>
+            </>
         );
     }
     
     return (
-        <Weblayout>
+        <>
             {/* Page Header */}
             <section className="page-header bg-gradient-water">
                 <div className="container">
@@ -203,7 +203,7 @@ function Invoice() {
                     </div>
                 </div>
             </section>
-        </Weblayout>
+        </>
     );
 }
 

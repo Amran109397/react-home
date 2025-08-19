@@ -62,7 +62,7 @@ function Login() {
                     <i className="fas fa-lock fa-lg me-3 fa-fw"></i>
                     <div data-mdb-input-init className="form-outline flex-fill mb-0">
                       <label className="form-label" htmlFor="password">Password</label>
-                      <input type="password" autocomplete="new-password" id="password" name="password" className="form-control" />
+                      <input type="password" autoComplete="new-password" id="password" name="password" className="form-control" />
                     </div>
                   </div>
                   <Link className="btn btn-link" to={"/register"}>Register</Link>

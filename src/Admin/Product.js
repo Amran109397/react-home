@@ -131,7 +131,7 @@ function Product() {
           Add New
         </Button>
         
-        <table className='mt-5 table table-bordered'>
+        <table className='mt-5 table table-bordered text-dark'>
           <thead>
             <tr>
               <th>#SL</th>

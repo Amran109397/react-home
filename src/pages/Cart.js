@@ -58,13 +58,13 @@ function Cart() {
     };
     
     return (
-        <Weblayout>
+        <>
             {/* Page Header */}
-            <section className="page-header bg-gradient-water">
+            <section className="page-header bg-gradient-water text-dark">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-8">
-                            <h1 className="text-white">Your Shopping Cart</h1>
+                            <h1 className="text-dark">Your Shopping Cart</h1>
                             <p className="text-white-50 mb-0">Review your selected water products</p>
                         </div>
                         <div className="col-md-4 text-md-end mt-3 mt-md-0">
@@ -314,7 +314,7 @@ function Cart() {
                     </div>
                 </div>
             </section>
-        </Weblayout>
+        </>
     );
 }
 

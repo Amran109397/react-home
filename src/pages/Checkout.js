@@ -124,7 +124,7 @@ function Checkout() {
     };
     
     return (
-        <Weblayout>
+        <>
             {/* Page Header */}
             <section className="page-header bg-gradient-water">
                 <div className="container">
@@ -408,7 +408,7 @@ function Checkout() {
                     )}
                 </div>
             </section>
-        </Weblayout>
+        </>
     );
 }
 
