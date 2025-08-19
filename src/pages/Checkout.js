@@ -3,7 +3,8 @@ import Weblayout from '../layout/Weblayout';
 import { useCart } from "react-use-cart";
 import axios from '../Admin/component/axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCity, FaArrowLeft, FaCheck } from 'react-icons/fa';
+import '../assets/checkoutstyle.css';
+import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCity, FaArrowLeft, FaCheck, FaWater } from 'react-icons/fa';
 
 function Checkout() {
     const {
@@ -124,14 +125,20 @@ function Checkout() {
     };
     
     return (
-        <>
-            {/* Page Header */}
-            <section className="page-header bg-gradient-water">
+        <>{/* Enhanced Page Header */}
+            <section className="page-header bg-gradient-ocean">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-8">
-                            <h1 className="text-white">Checkout</h1>
-                            <p className="text-white-50 mb-0">Complete your water purchase</p>
+                            <div className="d-flex align-items-center">
+                                <div className="header-icon me-3">
+                                    <FaWater className="text-white" />
+                                </div>
+                                <div>
+                                    <h1 className="text-white mb-0">Checkout</h1>
+                                    <p className="text-white-50 mb-0">Complete your water purchase</p>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-md-4 text-md-end mt-3 mt-md-0">
                             <nav aria-label="breadcrumb">
@@ -144,7 +151,11 @@ function Checkout() {
                         </div>
                     </div>
                 </div>
+                <div className="wave-shape"></div>
             </section>
+            
+            {/* ... (rest of the component remains unchanged) */}
+
             
             {/* Checkout Section */}
             <section className="py-5">

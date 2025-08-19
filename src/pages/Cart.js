@@ -3,7 +3,8 @@ import Weblayout from '../layout/Weblayout';
 import { useCart } from "react-use-cart";
 import axios from '../Admin/component/axios';
 import { Link, useLocation } from 'react-router';
-import { FaTrash, FaPlus, FaMinus, FaShoppingCart, FaTag, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import '../assets/cartstyle.css';
+import { FaTrash, FaPlus, FaMinus, FaShoppingCart, FaTag, FaArrowLeft, FaArrowRight, FaWater } from 'react-icons/fa';
 
 function Cart() {
     const {
@@ -59,13 +60,20 @@ function Cart() {
     
     return (
         <>
-            {/* Page Header */}
-            <section className="page-header bg-gradient-water text-dark">
+            {/* Enhanced Page Header - Matching Checkout Style */}
+            <section className="page-header bg-gradient-ocean">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-8">
-                            <h1 className="text-dark">Your Shopping Cart</h1>
-                            <p className="text-white-50 mb-0">Review your selected water products</p>
+                            <div className="d-flex align-items-center">
+                                <div className="header-icon me-3">
+                                    <FaShoppingCart className="text-white" />
+                                </div>
+                                <div>
+                                    <h1 className="text-white mb-0">Your Shopping Cart</h1>
+                                    <p className="text-white-50 mb-0">Review and manage your selected water products</p>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-md-4 text-md-end mt-3 mt-md-0">
                             <nav aria-label="breadcrumb">
@@ -77,6 +85,7 @@ function Cart() {
                         </div>
                     </div>
                 </div>
+                <div className="wave-shape"></div>
             </section>
             
             {/* Cart Section */}

@@ -1,11 +1,14 @@
 import * as React from 'react';
 import Weblayout from '../layout/Weblayout';
-import { Link } from 'react-router-dom';
-import { FaHome, FaPrint, FaDownload, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCity, FaCheckCircle } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import '../assets/invoicestyle.css';
+import { FaHome, FaPrint, FaDownload, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCity, FaCheckCircle, FaWater } from 'react-icons/fa';
 
 function Invoice() {
     const [orderData, setOrderData] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
+    const [showConfirmation, setShowConfirmation] = React.useState(true);
+    const navigate = useNavigate();
     
     React.useEffect(() => {
         // Get order data from localStorage
@@ -14,6 +17,15 @@ function Invoice() {
             setOrderData(JSON.parse(savedOrder));
         }
         setLoading(false);
+    }, []);
+    
+    React.useEffect(() => {
+        // Set timer to hide confirmation and show invoice if data exists
+        const timer = setTimeout(() => {
+            setShowConfirmation(false);
+        }, 3000); // Show for 3 seconds
+        
+        return () => clearTimeout(timer);
     }, []);
     
     // Helper function to format price
@@ -44,9 +56,91 @@ function Invoice() {
         );
     }
     
+    if (orderData && showConfirmation) {
+        return (
+            <>
+                {/* Enhanced Page Header - Matching Other Pages */}
+                <section className="page-header bg-gradient-ocean">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-md-8">
+                                <div className="d-flex align-items-center">
+                                    <div className="header-icon me-3">
+                                        <FaCheckCircle className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-white mb-0">Order Confirmed</h1>
+                                        <p className="text-white-50 mb-0">Thank you for your purchase</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                                <nav aria-label="breadcrumb">
+                                    <ol className="breadcrumb justify-content-md-end bg-transparent mb-0">
+                                        <li className="breadcrumb-item"><Link to="/" className="text-white">Home</Link></li>
+                                        <li className="breadcrumb-item active text-white" aria-current="page">Confirmation</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="wave-shape"></div>
+                </section>
+                
+                {/* Order Confirmation Section */}
+                <section className="py-5">
+                    <div className="container text-center">
+                        <div className="mb-4">
+                            <FaCheckCircle className="text-success" style={{ fontSize: '5rem' }} />
+                        </div>
+                        <h2 className="mb-3">Order Confirmed</h2>
+                        <p className="text-muted mb-4">Thank you for your purchase! Your order has been successfully placed.</p>
+                        <div className="mb-4">
+                            <div className="spinner-border text-primary" role="status">
+                                <span className="visually-hidden">Loading invoice...</span>
+                            </div>
+                            <p className="text-muted mt-2">Redirecting to your invoice...</p>
+                        </div>
+                        <Link to="/" className="btn btn-primary">
+                            <FaHome className="me-2" /> Back to Home
+                        </Link>
+                    </div>
+                </section>
+            </>
+        );
+    }
+    
     if (!orderData) {
         return (
             <>
+                {/* Enhanced Page Header - Matching Other Pages */}
+                <section className="page-header bg-gradient-ocean">
+                    <div className="container">
+                        <div className="row align-items-center">
+                            <div className="col-md-8">
+                                <div className="d-flex align-items-center">
+                                    <div className="header-icon me-3">
+                                        <FaCheckCircle className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-white mb-0">Order Confirmed</h1>
+                                        <p className="text-white-50 mb-0">Thank you for your purchase</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                                <nav aria-label="breadcrumb">
+                                    <ol className="breadcrumb justify-content-md-end bg-transparent mb-0">
+                                        <li className="breadcrumb-item"><Link to="/" className="text-white">Home</Link></li>
+                                        <li className="breadcrumb-item active text-white" aria-current="page">Confirmation</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="wave-shape"></div>
+                </section>
+                
                 <section className="py-5">
                     <div className="container text-center">
                         <div className="mb-4">
@@ -65,13 +159,20 @@ function Invoice() {
     
     return (
         <>
-            {/* Page Header */}
-            <section className="page-header bg-gradient-water">
+            {/* Enhanced Page Header - Matching Other Pages */}
+            <section className="page-header bg-gradient-ocean">
                 <div className="container">
                     <div className="row align-items-center">
                         <div className="col-md-8">
-                            <h1 className="text-white">Invoice</h1>
-                            <p className="text-white-50 mb-0">Order #{orderData.order_id}</p>
+                            <div className="d-flex align-items-center">
+                                <div className="header-icon me-3">
+                                    <FaWater className="text-white" />
+                                </div>
+                                <div>
+                                    <h1 className="text-white mb-0">Invoice</h1>
+                                    <p className="text-white-50 mb-0">Order #{orderData.order_id}</p>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-md-4 text-md-end mt-3 mt-md-0">
                             <nav aria-label="breadcrumb">
@@ -83,6 +184,7 @@ function Invoice() {
                         </div>
                     </div>
                 </div>
+                <div className="wave-shape"></div>
             </section>
             
             {/* Invoice Section */}
