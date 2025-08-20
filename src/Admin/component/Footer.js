@@ -13,7 +13,7 @@ function Footer(){
             <div className="d-flex align-items-center">
               <FaTint className="text-white me-2" />
               <span className="text-white small">
-                <FaCopyright className="me-1" /> {new Date().getFullYear()} Water Store Admin
+                <FaCopyright className="me-1" /> {new Date().getFullYear()} Acuas Admin
               </span>
             </div>
           </div>

@@ -69,7 +69,7 @@ function Register() {
                 </div>
                 <div>
                   <h1 className="text-white mb-0">Create Account</h1>
-                  <p className="text-white-50 mb-0">Join the Water Store community</p>
+                  <p className="text-white-50 mb-0">Join the Acuas community</p>
                 </div>
               </div>
             </div>
@@ -114,7 +114,7 @@ function Register() {
                             className="form-control border-start-0"
                             id="name"
                             name="name"
-                            placeholder="John Doe"
+                            placeholder="Your Name"
                             required
                           />
                         </div>
@@ -232,7 +232,7 @@ function Register() {
               </div>
               
               <div className="text-center mt-4">
-                <p className="text-muted mb-0">© {new Date().getFullYear()} Water Store. All rights reserved.</p>
+                <p className="text-muted mb-0">© {new Date().getFullYear()} Acuas. All rights reserved.</p>
               </div>
             </div>
           </div>

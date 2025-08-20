@@ -90,7 +90,7 @@ function Login() {
                         <div className="mb-4">
                           <FaTint className="water-icon" />
                         </div>
-                        <h2 className="mb-3">Water Store Admin</h2>
+                        <h2 className="mb-3">Acuas Admin</h2>
                         <p className="mb-4">Manage your water store inventory, orders, and customers with ease.</p>
 
                       </div>

@@ -47,7 +47,7 @@ function Header() {
                   <FaTint className="text-white" />
                 </div>
                 <div>
-                  <h1 className="text-white mb-0">Water Store Admin</h1>
+                  <h1 className="text-white mb-0">Acuas Admin</h1>
                   <p className="text-white-50 mb-0">Management Dashboard</p>
                 </div>
               </div>
