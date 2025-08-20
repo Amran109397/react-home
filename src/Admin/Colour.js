@@ -111,7 +111,7 @@ function Colour() {
       <Modal show={show} onHide={handleClose}>
         <form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Add User</Modal.Title>
+            <Modal.Title>Add Color</Modal.Title>
           </Modal.Header>
           <Modal.Body>
               <div className='form-group'>

@@ -111,7 +111,7 @@ function Brand() {
       <Modal show={show} onHide={handleClose}>
         <form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Add User</Modal.Title>
+            <Modal.Title>Add Brand</Modal.Title>
           </Modal.Header>
           <Modal.Body>
               <div className='form-group'>

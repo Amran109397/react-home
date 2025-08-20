@@ -8,6 +8,7 @@ import Service from './pages/Service';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Feature from './pages/Feature';
+import Our_Product from './pages/Our_Product';
 
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/Service" element={<Service />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Feature" element={<Feature />} />
+          <Route path="/Our_Product" element={<Our_Product />} />
           <Route path="/Blog" element={<Blog />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/checkout' element={<Checkout />} />

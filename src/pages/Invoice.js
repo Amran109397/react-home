@@ -205,11 +205,11 @@ function Invoice() {
                         <div className="card-body">
                             <div className="row mb-4">
                                 <div className="col-md-6">
-                                    <h5 className="mb-3">Water Store</h5>
+                                    <h5 className="mb-3">Acuas</h5>
                                     <p className="mb-1">123 Water Street</p>
                                     <p className="mb-1">Dhaka, Bangladesh</p>
                                     <p className="mb-1">Phone: +880 1234 567890</p>
-                                    <p>Email: info@waterstore.com</p>
+                                    <p>Email: info@ACUASstore.com</p>
                                 </div>
                                 <div className="col-md-6 text-md-end">
                                     <h5 className="mb-3">Invoice To</h5>
