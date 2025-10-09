@@ -58,7 +58,7 @@ function Invoice() {
     
     if (orderData && showConfirmation) {
         return (
-            <>
+            <Weblayout>
                 {/* Enhanced Page Header - Matching Other Pages */}
                 <section className="page-header bg-gradient-ocean">
                     <div className="container">
@@ -106,13 +106,13 @@ function Invoice() {
                         </Link>
                     </div>
                 </section>
-            </>
+            </Weblayout >
         );
     }
     
     if (!orderData) {
         return (
-            <>
+            <Weblayout>
                 {/* Enhanced Page Header - Matching Other Pages */}
                 <section className="page-header bg-gradient-ocean">
                     <div className="container">
@@ -153,12 +153,12 @@ function Invoice() {
                         </Link>
                     </div>
                 </section>
-            </>
+            </Weblayout>
         );
     }
     
     return (
-        <>
+        <Weblayout>
             {/* Enhanced Page Header - Matching Other Pages */}
             <section className="page-header bg-gradient-ocean">
                 <div className="container">
@@ -305,7 +305,7 @@ function Invoice() {
                     </div>
                 </div>
             </section>
-        </>
+        </Weblayout>
     );
 }
 
